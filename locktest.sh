@@ -6,18 +6,11 @@ function script_lock  {
 	typeset MY_LOCKFILE
 	MY_LOCKFILE=$1
 	SCRIPTNAME=$(basename $0)
-	#echo SCRIPTNAME: $SCRIPTNAME
-	SCRIPTPFX=$(echo $SCRIPTNAME|cut -b1)
-	LB='['; RB=']'
-	SCRIPTSFX=$(echo $SCRIPTNAME|cut -b2-)
-	SCRIPTCHK='\['"${SCRIPTPFX}"'\]'"${SCRIPTSFX}"
-	#echo SCRIPTCHK: $SCRIPTCHK
 
 	# remove stale lockfile
 	[ -r "$MY_LOCKFILE" ] && {
 		PID=$(cat $MY_LOCKFILE)
-		ACTIVE=$(ps --no-headers -p $PID | grep $SCRIPTNAME)
-		#ACTIVE=$(ps --no-headers -p $PID )
+		ACTIVE=$(ps -p $PID --no-headers -o cmd | grep --color=never $SCRIPTNAME)
 		if [ -z "$ACTIVE" ]; then
 			rm -f $MY_LOCKFILE
 		fi
